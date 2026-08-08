@@ -1,4 +1,4 @@
-# Zoho Bulk Loader (`zoho_lib`)
+# Zoho Helper Python Library (zoho_lib`)
 
 An abstract, elegant, and robust Python-based library for programmatic data exchanges (ETL, synchronization) with **Zoho Creator** and **Zoho Analytics**. It removes OAuth boilerplate, standardizes REST API transport, and seamlessly exports records directly as clean **Pandas DataFrames**.
 
