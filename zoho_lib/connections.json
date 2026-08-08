@@ -1,0 +1,24 @@
+{
+  "my_creator_conn": {
+    "client_id": "1000.EXAMPLECLIENTID1234567890",
+    "client_secret": "examplesecret9876543210example9876543210",
+    "soid": "ZohoCreator.123456789",
+    "accounts_domain": "https://accounts.zoho.com",
+    "scopes": [
+      "ZohoCreator.form.CREATE",
+      "ZohoCreator.report.READ",
+      "ZohoCreator.report.UPDATE",
+      "ZohoCreator.report.DELETE"
+    ]
+  },
+  "my_analytics_conn": {
+    "client_id": "1000.EXAMPLECLIENTID1234567890",
+    "client_secret": "examplesecret9876543210example9876543210",
+    "soid": "ZohoAnalytics.987654321",
+    "accounts_domain": "https://accounts.zoho.com",
+    "scopes": [
+      "ZohoAnalytics.data.read",
+      "ZohoAnalytics.data.create"
+    ]
+  }
+}
