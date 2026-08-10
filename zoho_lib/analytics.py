@@ -64,3 +64,4 @@ class ZAnalytics:
         rows = resp.get("data", {}).get("data", [])
 
         return pd.DataFrame(rows)
+
