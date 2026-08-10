@@ -1,7 +1,6 @@
-[Portfolio Home](https://aniekandan.github.io/PythonPortfolioDocs/)
-# Zoho Helper Python Library (zoho_lib`)
+# Zoho Helper Python Library (`zoho_lib`)
 
-An abstract, elegant, and robust Python-based library for programmatic data exchanges (ETL, synchronization) with **Zoho Creator** and **Zoho Analytics**. It removes OAuth boilerplate, standardizes REST API transport, and seamlessly exports records directly as clean **Pandas DataFrames**.
+An abstract, elegant, and robust Python-based library for programmatic data exchanges (ETL, synchronization) with **Zoho Creator**, **Zoho Analytics**, and **Zoho People**. It removes OAuth boilerplate, standardizes REST API transport, and seamlessly exports records directly as clean **Pandas DataFrames**.
 
 ---
 
@@ -20,12 +19,14 @@ my_project/
 │   ├── connection_manager.py # Registry & Programmatic Connection API
 │   ├── invoke.py             # Standardized HTTP transport & auth injector
 │   ├── creator.py            # Zoho Creator API service adapter
-│   └── analytics.py          # Zoho Analytics API service adapter
+│   ├── analytics.py          # Zoho Analytics API service adapter
+│   └── people.py             # Zoho People API service adapter
 │
 ├── samples/                  # Sibling examples folder (run scripts from here)
 │   ├── connections_example.py# Zoho connection management CRUD operations
 │   ├── creator_example.py    # Zoho Creator integration (GET, POST, PATCH)
-│   └── analytics_example.py  # Zoho Analytics table data integration (GET)
+│   ├── analytics_example.py  # Zoho Analytics table data integration (GET)
+│   └── people_example.py     # Zoho People integration (attendance, forms, holidays)
 │
 └── requirements.txt          # Package dependencies
 ```
@@ -55,7 +56,7 @@ from zoho_lib import conn_mgr
 
 # 1. List all currently registered connection names
 print(conn_mgr.list_connections())
-# Output: ['my_creator_conn', 'my_analytics_conn']
+# Output: ['my_creator_conn', 'my_analytics_conn', 'my_people_conn']
 
 # 2. Add a new Zoho Creator connection programmatically
 conn_mgr.add_connection(
@@ -103,6 +104,16 @@ If you prefer editing the JSON configuration file directly, open `zoho_lib/conne
       "ZohoAnalytics.data.read",
       "ZohoAnalytics.data.create"
     ]
+  },
+  "my_people_conn": {
+    "client_id": "YOUR_ZOHO_CLIENT_ID_HERE",
+    "client_secret": "YOUR_ZOHO_CLIENT_SECRET_HERE",
+    "soid": "ZohoPeople.YOUR_ORG_ID_HERE",
+    "accounts_domain": "https://accounts.zoho.com",
+    "scopes": [
+      "ZohoPeople.attendance.ALL",
+      "ZohoPeople.forms.ALL"
+    ]
   }
 }
 ```
@@ -115,11 +126,12 @@ Import the convenience manager and service adapters directly from the library to
 
 ```python
 import pandas as pd
-from zoho_lib import conn_mgr, ZCreator, ZAnalytics
+from zoho_lib import conn_mgr, ZCreator, ZAnalytics, ZPeople
 
 # 1. Initialize the services using the connection names declared in connections.json
 creator = ZCreator(conn_mgr, "my_creator_conn")
 analytics = ZAnalytics(conn_mgr, "my_analytics_conn")
+people = ZPeople(conn_mgr, "my_people_conn")
 
 # 2. Fetch Creator reports as clean Pandas DataFrames
 df_creator = creator.get_records(
@@ -136,6 +148,18 @@ df_analytics = analytics.get_table_data(
     selected_columns=["Region", "Sales", "Quantity"]
 )
 print(df_analytics.head())
+
+# 4. Bulk import attendance into Zoho People
+resp_people = people.bulk_import_attendance(
+    data=[
+        {
+            "empId": "1001",
+            "checkIn": "2024-11-07 09:01:00",
+            "checkOut": "2024-11-07 17:30:00"
+        }
+    ]
+)
+print(resp_people)
 ```
 
 ---
@@ -147,6 +171,7 @@ Fully functional scripts reside in the **external** sibling `samples/` directory
 * **`samples/connections_example.py`**: Demonstrates connection management (CRUD) such as programmatically listing, adding, updating, and deleting connections in `connections.json` using the connection manager.
 * **`samples/creator_example.py`**: Handles Zoho Creator list views, inserts a new contact, and edits existing record parameters.
 * **`samples/analytics_example.py`**: Fetches multidimensional workspace views as a Pandas DataFrame and summarizes records.
+* **`samples/people_example.py`**: Demonstrates Zoho People operations such as bulk importing employee attendance, updating form records, and fetching holiday schedules.
 
 ### How to Run:
 You can execute these samples from any location. All files are pre-loaded with sys-path append guards:
@@ -155,9 +180,12 @@ You can execute these samples from any location. All files are pre-loaded with s
 python samples/connections_example.py
 python samples/creator_example.py
 python samples/analytics_example.py
+python samples/people_example.py
 
 # Or from inside the samples/ folder:
 cd samples
 python connections_example.py
 python creator_example.py
+python analytics_example.py
+python people_example.py
 ```
